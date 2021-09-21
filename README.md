@@ -10,7 +10,7 @@ Make a PUT request at "http://localhost:9200/movies" with the following body
       "poster":   { "type": "text"  },   
       "overview":   { "type": "text"  }, 
       "release_date":   { "type": "date","format":"epoch_second"  }, 
-      "genres":   { "type": "text"  } 
+      "genres":   { "type": "keyword"  } 
     }
   }
 }
