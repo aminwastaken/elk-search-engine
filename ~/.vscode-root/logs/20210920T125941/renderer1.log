@@ -1,2 +1,0 @@
-[2021-09-20 15:05:47.138] [renderer1] [error] XHR failed: Error: XHR failed
-    at XMLHttpRequest.w.onerror (vscode-file://vscode-app/snap/code/74/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:85:24532)
