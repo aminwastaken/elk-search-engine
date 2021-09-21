@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const App = () => {
@@ -17,14 +17,17 @@ const App = () => {
     },
   };
   const [response, setResponse] = useState({});
-  axios
-    .get("http://0.0.0.0:9200/movies/_search", {
-      data: JSON.stringify(query),
-    })
-    .then((res) => {
-      setResponse(res);
-      console.log(res);
-    });
+
+  useEffect(() => {
+    axios
+      .get("http://0.0.0.0:9200/movies/_search", {
+        data: JSON.stringify(query),
+      })
+      .then((res) => {
+        setResponse(res);
+        console.log(res);
+      });
+  });
 
   return <div className="App">{JSON.stringify(response)}</div>;
 };
