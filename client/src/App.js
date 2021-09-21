@@ -16,6 +16,7 @@ const App = () => {
       overview: "adventure",
     },
   };
+
   const [response, setResponse] = useState({});
 
   useEffect(() => {
@@ -24,7 +25,7 @@ const App = () => {
         data: JSON.stringify(query),
       })
       .then((res) => {
-        setResponse(res);
+        // setResponse(res);
         console.log(res);
       });
   });
