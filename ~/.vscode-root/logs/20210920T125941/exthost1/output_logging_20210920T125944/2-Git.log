@@ -345,3 +345,4 @@ Open repository: /home/amin/documents/school/elk
 > git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
 > git remote --verbose
 > git config --get commit.template
+> git check-ignore -v -z --stdin
