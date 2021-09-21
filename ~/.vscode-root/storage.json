@@ -1484,10 +1484,10 @@
             "folder": "file:///home/amin/documents/school/elk",
             "backupPath": "/home/amin/documents/school/elk/~/.vscode-root/Backups/33aae588ea745c290c0a1764d40a99a1",
             "uiState": {
-                "mode": 0,
-                "x": 171,
+                "mode": 1,
+                "x": 48,
                 "y": 55,
-                "width": 1024,
+                "width": 1318,
                 "height": 713
             }
         },
