@@ -11,6 +11,7 @@ const Home = () => {
   const [genres, setGenres] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [order, setOrder] = useState("desc");
+  const [searchQuery, setSearchQuery] = useState("");
   const movieListQuery = {
     sort: [
       {
@@ -62,17 +63,33 @@ const Home = () => {
               match: {
                 genres: genre.key,
               },
-            })),
+            }))
+            .concat(
+              searchQuery == ""
+                ? []
+                : [
+                    {
+                      multi_match: {
+                        query: searchQuery,
+                        fields: ["title", "overview"],
+                        fuzziness: 1,
+                      },
+                    },
+                  ]
+            ),
         },
       },
 
-      sort: [
-        {
-          release_date: {
-            order: order,
-          },
-        },
-      ],
+      sort:
+        searchQuery == ""
+          ? [
+              {
+                release_date: {
+                  order: order,
+                },
+              },
+            ]
+          : undefined,
     };
     console.log("query");
     console.log(query);
@@ -87,7 +104,7 @@ const Home = () => {
       console.log(res.hits.hits);
       setTotal(res.hits.total.value);
     });
-  }, [genres, order]);
+  }, [genres, order, searchQuery]);
 
   useEffect(() => {
     elasticSearch(categoriesQuery).then((res) => {
@@ -104,13 +121,8 @@ const Home = () => {
     <div>
       HomePage
       {JSON.stringify(genres)}
-      <SearchBar />
-      <GenresList
-        genres={genres}
-        setGenres={setGenres}
-
-        // updateQuery={updateQuery}
-      />
+      <SearchBar setSearchQuery={setSearchQuery} />
+      <GenresList genres={genres} setGenres={setGenres} />
       <button onClick={() => setOrder(order === "desc" ? "asc" : "desc")}>
         order by date
       </button>

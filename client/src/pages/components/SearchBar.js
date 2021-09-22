@@ -1,8 +1,11 @@
-const SearchBar = () => {
+const SearchBar = ({ setSearchQuery }) => {
+  const HandleChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
   return (
     <div>
-      <input />
-      <button> Search </button>
+      <input onChange={HandleChange} />
+      {/* <button> Search </button> */}
     </div>
   );
 };
