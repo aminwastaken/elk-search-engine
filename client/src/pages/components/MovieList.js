@@ -12,6 +12,7 @@ const MovieList = ({ hits, total }) => {
               title={hit._source.title}
               poster={hit._source.poster}
               overview={hit._source.overview}
+              genres={hit._source.genres}
               releaseDate={hit._source.release_date}
             />
           );

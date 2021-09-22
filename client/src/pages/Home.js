@@ -10,6 +10,7 @@ const Home = () => {
   const [total, setTotal] = useState(0);
   const [genres, setGenres] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
+  const [order, setOrder] = useState("desc");
   const movieListQuery = {
     sort: [
       {
@@ -49,26 +50,70 @@ const Home = () => {
     },
   };
 
+  const generateQuery = () => {
+    let query = {
+      query: {
+        bool: {
+          must: genres
+            .filter((genre) => {
+              return genre.selected === true;
+            })
+            .map((genre) => ({
+              match: {
+                genres: genre.key,
+              },
+            })),
+        },
+      },
+
+      sort: [
+        {
+          release_date: {
+            order: order,
+          },
+        },
+      ],
+    };
+    console.log("query");
+    console.log(query);
+
+    return query;
+  };
   useEffect(() => {
-    elasticSearch(movieListQuery).then((res) => {
+    elasticSearch(generateQuery()).then((res) => {
       setHits(res.hits.hits);
+      console.log("res.hits.hits");
+
+      console.log(res.hits.hits);
       setTotal(res.hits.total.value);
     });
+  }, [genres, order]);
 
+  useEffect(() => {
     elasticSearch(categoriesQuery).then((res) => {
-      setGenres(res.aggregations.all_genres.buckets);
-      console.log(res.aggregations.all_genres.buckets);
+      setGenres(
+        res.aggregations.all_genres.buckets.map((genre) => ({
+          key: genre.key,
+          doc_count: genre.doc_count,
+          selected: false,
+        }))
+      );
     });
   }, []);
   return (
     <div>
       HomePage
+      {JSON.stringify(genres)}
       <SearchBar />
       <GenresList
         genres={genres}
-        selectedGenres={selectedGenres}
-        setSelectedGenres={setSelectedGenres}
+        setGenres={setGenres}
+
+        // updateQuery={updateQuery}
       />
+      <button onClick={() => setOrder(order === "desc" ? "asc" : "desc")}>
+        order by date
+      </button>
       <MovieList hits={hits} total={total} />
     </div>
   );
