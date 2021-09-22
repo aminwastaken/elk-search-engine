@@ -5,9 +5,10 @@ const MovieList = ({ hits, total }) => {
     <div>
       <h1>movie list</h1>
       <div>
-        {hits.map((hit) => {
+        {hits.map((hit, index) => {
           return (
             <Movie
+              key={index}
               title={hit._source.title}
               poster={hit._source.poster}
               overview={hit._source.overview}
