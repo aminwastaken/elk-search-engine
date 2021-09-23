@@ -4,14 +4,26 @@ import MovieList from "./components/MovieList";
 import SearchBar from "./components/SearchBar";
 import elasticSearch from "../utils/elasticSearch";
 import GenresList from "./components/GenresList";
+import DateRangeSelect from "./components/DateRangeSelect";
+import { DateRange } from "@appbaseio/reactivesearch";
+import Pagination from "./components/Pagination";
 
 const Home = () => {
   const [hits, setHits] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState({});
   const [genres, setGenres] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [order, setOrder] = useState("desc");
+  const [orderTriggered, setOrderTriggered] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [dateRangeStart, setDateRangeStart] = useState(undefined);
+  const [dateRangeEnd, setDateRangeEnd] = useState(undefined);
+  const [dateRange, setDateRange] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageCount, setPageCount] = useState(undefined);
+  const [elementsSize, setElementsSize] = useState(5);
+  // const []
+
   const movieListQuery = {
     sort: [
       {
@@ -76,12 +88,26 @@ const Home = () => {
                       },
                     },
                   ]
+            )
+            .concat(
+              dateRange === false
+                ? []
+                : [
+                    {
+                      range: {
+                        release_date: {
+                          gte: new Date(dateRangeStart) / 1000,
+                          lte: new Date(dateRangeEnd) / 1000,
+                        },
+                      },
+                    },
+                  ]
             ),
         },
       },
 
       sort:
-        searchQuery == ""
+        searchQuery == "" || orderTriggered
           ? [
               {
                 release_date: {
@@ -90,6 +116,9 @@ const Home = () => {
               },
             ]
           : undefined,
+
+      from: currentPage * elementsSize,
+      size: elementsSize,
     };
     console.log("query");
     console.log(query);
@@ -99,12 +128,27 @@ const Home = () => {
   useEffect(() => {
     elasticSearch(generateQuery()).then((res) => {
       setHits(res.hits.hits);
-      console.log("res.hits.hits");
-
-      console.log(res.hits.hits);
-      setTotal(res.hits.total.value);
+      console.log("res");
+      console.log(res);
+      setTotal(res.hits.total);
     });
-  }, [genres, order, searchQuery]);
+  }, [
+    genres,
+    order,
+    searchQuery,
+    dateRangeStart,
+    dateRangeEnd,
+    dateRange,
+    currentPage,
+    elementsSize,
+  ]);
+
+  useEffect(() => {
+    if (searchQuery === "") {
+      setOrder("desc");
+      setOrderTriggered(false);
+    }
+  }, [searchQuery]);
 
   useEffect(() => {
     elasticSearch(categoriesQuery).then((res) => {
@@ -117,15 +161,51 @@ const Home = () => {
       );
     });
   }, []);
+
+  const updateOrder = () => {
+    setOrder(order === "desc" ? "asc" : "desc");
+    setOrderTriggered(true);
+  };
   return (
     <div>
-      HomePage
-      {JSON.stringify(genres)}
+      movies app
+      {/* {JSON.stringify(genres)} */}
       <SearchBar setSearchQuery={setSearchQuery} />
       <GenresList genres={genres} setGenres={setGenres} />
-      <button onClick={() => setOrder(order === "desc" ? "asc" : "desc")}>
-        order by date
-      </button>
+      <DateRangeSelect
+        dateRange={dateRange}
+        setDateRange={setDateRange}
+        dateRangeStart={dateRangeStart}
+        dateRangeEnd={dateRangeEnd}
+        setDateRangeStart={setDateRangeStart}
+        setDateRangeEnd={setDateRangeEnd}
+      />
+      <button onClick={() => updateOrder()}>order by date</button>
+      <div>
+        {/* {JSON.stringify(total)} */}
+        total:{" "}
+        {(total && total.relation === "gt") ||
+          (total.relation === "gte" && "more than ")}{" "}
+        {total.value} results
+      </div>
+      <div>
+        number of pages:
+        {total && elementsSize && Math.ceil(total.value / elementsSize)}{" "}
+      </div>
+      <div>
+        elements per page{" "}
+        <input
+          value={elementsSize}
+          onChange={(event) => {
+            setElementsSize(event.target.value);
+          }}
+        />
+      </div>
+      <Pagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pageCount={Math.ceil(total.value / elementsSize)}
+      />
       <MovieList hits={hits} total={total} />
     </div>
   );
