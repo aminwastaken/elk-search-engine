@@ -21,6 +21,7 @@ const GenresList = ({ genres, setGenres, updateQuery }) => {
         <div
           onClick={(event) => handleClick(genre.key)}
           style={genre.selected ? { backgroundColor: "green" } : {}}
+          className="py-1"
         >
           <Genre name={genre.key} count={genre.doc_count} />
         </div>

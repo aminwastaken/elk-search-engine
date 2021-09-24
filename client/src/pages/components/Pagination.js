@@ -2,21 +2,41 @@ const Pagination = ({ currentPage, setCurrentPage, pageCount }) => {
   return (
     <div>
       <button
-        style={{ padding: 5 }}
+        className="mx-1 text-blue-500 underline"
+        onClick={() => {
+          setCurrentPage(0);
+        }}
+      >
+        Page 1
+      </button>
+
+      <button
+      className="mx-2"
         onClick={() => {
           currentPage > 0 && setCurrentPage(currentPage - 1);
         }}
       >
         {"<"}
       </button>
-      <span style={{ margin: 20 }}>{currentPage + 1}</span>
+
+      <span className="mx-2">{currentPage + 1}</span>
+
       <button
-        style={{ padding: 5 }}
+      className="mx-2"
         onClick={() => {
           currentPage < pageCount - 1 && setCurrentPage(currentPage + 1);
         }}
       >
         {">"}
+      </button>
+
+      <button
+        className="mx-1 text-blue-500 underline"
+        onClick={() => {
+          setCurrentPage(pageCount - 1);
+        }}
+      >
+        Page {pageCount}
       </button>
     </div>
   );

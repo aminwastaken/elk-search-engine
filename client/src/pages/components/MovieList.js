@@ -2,8 +2,8 @@ import Movie from "./Movie";
 
 const MovieList = ({ hits, total }) => {
   return (
-    <div>
-      <h1>movie list</h1>
+    <div className="my-2">
+      <p className="text-3xl font-extrabold">Results</p>
       <div>
         {hits.map((hit, index) => {
           return (

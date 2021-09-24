@@ -3,8 +3,8 @@ const SearchBar = ({ setSearchQuery }) => {
     setSearchQuery(event.target.value);
   };
   return (
-    <div>
-      <input onChange={HandleChange} />
+    <div className="flex justify-center">
+      <input onChange={HandleChange} className="py-1 border-2 border-black rounded w-1/2"/>
       {/* <button> Search </button> */}
     </div>
   );

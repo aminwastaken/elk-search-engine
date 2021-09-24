@@ -7,16 +7,22 @@ const Movie = ({ title, poster, overview, releaseDate, genres }) => {
   return (
     <div className="movie-container">
       <img src={poster} alt="movie poster" className="movie-poster" />
-      <div className="movie-details">
-        <h2 className="movie-title">{title}</h2>
+      <div className="mx-2 px-2 flex flex-col items-start">
+        <p className="font-extrabold text-2xl">{title}</p>
         <p className="movie-overview">{overview}</p>
         <p className="movie-rdate">{formatDate(formattedReleaseDate)}</p>
-        <p>
+        <div className="flex">
+          <p className="underline mr-1">Genres:</p>
+          <p>{genres?.map((genre) => (
+            <span> {genre} </span>
+          ))}</p>
+        </div>
+        {/* <p>
           Genre:
           {genres?.map((genre) => (
             <span> {genre} </span>
           ))}
-        </p>
+        </p> */}
       </div>
     </div>
   );

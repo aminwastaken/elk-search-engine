@@ -7,8 +7,9 @@ const DateRangeSelect = ({
   setDateRangeEnd,
 }) => {
   return (
-    <div>
+    <div className="mt-4">
       <input
+        className="border border-black mx-2 p-1"
         value={dateRangeStart}
         type="date"
         onChange={(event) => {
@@ -16,6 +17,7 @@ const DateRangeSelect = ({
         }}
       />
       <input
+        className="border border-black mx-2 p-1"
         value={dateRangeEnd}
         type="date"
         onChange={(event) => {
@@ -23,6 +25,7 @@ const DateRangeSelect = ({
         }}
       />
       <input
+        className="border border-black mx-2 p-1"
         type="checkbox"
         checked={dateRange}
         onChange={() => {

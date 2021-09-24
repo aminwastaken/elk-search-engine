@@ -5,14 +5,12 @@ import SearchBar from "./components/SearchBar";
 import elasticSearch from "../utils/elasticSearch";
 import GenresList from "./components/GenresList";
 import DateRangeSelect from "./components/DateRangeSelect";
-import { DateRange } from "@appbaseio/reactivesearch";
 import Pagination from "./components/Pagination";
 
 const Home = () => {
   const [hits, setHits] = useState([]);
   const [total, setTotal] = useState({});
   const [genres, setGenres] = useState([]);
-  const [selectedGenres, setSelectedGenres] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderTriggered, setOrderTriggered] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,7 +18,6 @@ const Home = () => {
   const [dateRangeEnd, setDateRangeEnd] = useState(undefined);
   const [dateRange, setDateRange] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageCount, setPageCount] = useState(undefined);
   const [elementsSize, setElementsSize] = useState(5);
   // const []
 
@@ -40,25 +37,6 @@ const Home = () => {
         terms: {
           field: "genres",
         },
-      },
-    },
-  };
-
-  const genreFilterQuery = {
-    query: {
-      bool: {
-        must: [
-          {
-            match: {
-              genres: "Action",
-            },
-          },
-          {
-            match: {
-              genres: "Adventure",
-            },
-          },
-        ],
       },
     },
   };
@@ -167,46 +145,59 @@ const Home = () => {
     setOrderTriggered(true);
   };
   return (
-    <div>
-      movies app
-      {/* {JSON.stringify(genres)} */}
-      <SearchBar setSearchQuery={setSearchQuery} />
-      <GenresList genres={genres} setGenres={setGenres} />
-      <DateRangeSelect
-        dateRange={dateRange}
-        setDateRange={setDateRange}
-        dateRangeStart={dateRangeStart}
-        dateRangeEnd={dateRangeEnd}
-        setDateRangeStart={setDateRangeStart}
-        setDateRangeEnd={setDateRangeEnd}
-      />
-      <button onClick={() => updateOrder()}>order by date</button>
-      <div>
-        {/* {JSON.stringify(total)} */}
-        total:{" "}
-        {(total && total.relation === "gt") ||
-          (total.relation === "gte" && "more than ")}{" "}
-        {total.value} results
+    <div className="flex">
+      <div className="w-1/6 pt-4">
+        <GenresList genres={genres} setGenres={setGenres} />
       </div>
-      <div>
-        number of pages:
-        {total && elementsSize && Math.ceil(total.value / elementsSize)}{" "}
-      </div>
-      <div>
-        elements per page{" "}
-        <input
-          value={elementsSize}
-          onChange={(event) => {
-            setElementsSize(event.target.value);
-          }}
+      <div className="w-5/6 px-4">
+        Movies search engine
+        {/* {JSON.stringify(genres)} */}
+        <SearchBar setSearchQuery={setSearchQuery} />
+        <DateRangeSelect
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+          dateRangeStart={dateRangeStart}
+          dateRangeEnd={dateRangeEnd}
+          setDateRangeStart={setDateRangeStart}
+          setDateRangeEnd={setDateRangeEnd}
+        />
+        <button
+          className="p-1 my-4 border border-black bg-gray-300"
+          onClick={() => updateOrder()}
+        >
+          Order by date
+        </button>
+        <div>
+          Number of pages:{" "}
+          {total && elementsSize && Math.ceil(total.value / elementsSize)}{" "}
+        </div>
+        <div>
+          Elements per page :{" "}
+          <input
+            value={elementsSize}
+            type="number"
+            onChange={(event) => {
+              setElementsSize(
+                event.target.value < 0 ? elementsSize : event.target.value
+              );
+            }}
+            className="border border-black px-2 py-1 w-20"
+          />
+        </div>
+        <div className="italic text-gray-600 text-md flex justify-start">
+          {/* {JSON.stringify(total)} */}
+          Total :{" "}
+          {(total && total.relation === "gt") ||
+            (total.relation === "gte" && "more than ")}{" "}
+          {total.value} results
+        </div>
+        <MovieList hits={hits} total={total} />
+        <Pagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          pageCount={Math.ceil(total.value / elementsSize)}
         />
       </div>
-      <Pagination
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        pageCount={Math.ceil(total.value / elementsSize)}
-      />
-      <MovieList hits={hits} total={total} />
     </div>
   );
 };
